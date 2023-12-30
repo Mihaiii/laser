@@ -6,8 +6,8 @@ import argparse
 import numpy as np
 from tqdm import tqdm
 from copy import deepcopy
-from transformers import LlamaTokenizerFast
-from transformers import LlamaForCausalLM
+from transformers import AutoTokenizer
+from transformers import AutoModelForCausalLM
 
 from dataset_utils.bigbench import get_bb_dataset
 from laser.LaserWrapper import LaserWrapper
@@ -288,9 +288,8 @@ if __name__ == '__main__':
     # Step 2: Load model and tokenizer
     llm_name = "Llama2-7G"
     llm_path = args.model_path
-    tokenizer = LlamaTokenizerFast.from_pretrained(llm_path)
-    base_model = LlamaForCausalLM.from_pretrained(llm_path)
-
+    tokenizer = AutoTokenizer.from_pretrained(llm_path)
+    #base_model = AutoModelForCausalLM.from_pretrained(llm_path, torch_dtype=torch.bfloat16)
     # Step 3: Create save directory and logger
     home_dir = args.home_dir
     split = args.split
@@ -339,7 +338,7 @@ if __name__ == '__main__':
                 args.lnum = lnum
                 args.lname = lname
                 args.rate = rate
-                model = deepcopy(base_model)
+                model = AutoModelForCausalLM.from_pretrained(llm_path, torch_dtype=torch.bfloat16)
                 predictions = experiment.intervene(model=model,
                                                    tokenizer=tokenizer,
                                                    dataset=dataset,
@@ -363,10 +362,11 @@ if __name__ == '__main__':
                         best_lnum = lnum
                         best_lname = lname
                         best_rate = rate
+                    if base_results is not None:
+                        logger.log(f"Base model results {base_results.to_str()}. ")
 
-                    logger.log(f"Base model results {base_results.to_str()}. "
-                               f"Best results {best_results.to_str()} at "
-                               f"layer: {best_lnum}, lname: {best_lnum}, rate: {best_rate}")
+                    logger.log(f"Best results {best_results.to_str()} at "
+                               f"layer: {best_lnum}, lname: {best_lname}, rate: {best_rate}")
                     logger.log("=============")
 
     logger.log("Experimented Completed.")
