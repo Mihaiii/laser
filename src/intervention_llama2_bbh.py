@@ -322,10 +322,6 @@ if __name__ == '__main__':
     best_rate = None
 
     # for lnum in [-1, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17]:
-    skip_mlp = False
-    skip_attn = False
-    mlp_score = (0, 0)
-    attn_score = (0, 0)
     for lnum in [57]:
 
         if lnum == -1:
@@ -337,7 +333,12 @@ if __name__ == '__main__':
             #rates = [9.0]
             rates = [9.0, 9.5, 9.9, 9.95, 8.0]
             # rates = [1.0, 2.0, 4.0, 6.0, 8.0, 9.0, 9.5, 9.9, 9.95]
-
+        
+        skip_mlp = False
+        skip_attn = False
+        mlp_score = (0, 0)
+        attn_score = (0, 0)
+        
         for rate in reversed(rates):
             for lname in lnames:
 
