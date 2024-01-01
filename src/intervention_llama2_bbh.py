@@ -342,17 +342,18 @@ if __name__ == '__main__':
         for rate in reversed(rates):
             for lname in lnames:
 
-                if skip_mlp and lname == 'mlp':
-                    continue
-                if skip_attn and lname == 'attn':
-                    continue
-
                 if skip_mlp is False and skip_attn is False and mlp_score != (0, 0) and attn_score != (0, 0):
                     if mlp_score[0] > attn_score[0] or (mlp_score[0] == attn_score[0] and mlp_score[1] < attn_score[1]):
                         skip_attn = True
                     else:
                         skip_mlp = True
-                        
+                
+                if skip_mlp and lname == 'mlp':
+                    continue
+                if skip_attn and lname == 'attn':
+                    continue
+                
+                
                 args.lnum = lnum
                 args.lname = lname
                 args.rate = rate
