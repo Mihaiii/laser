@@ -338,8 +338,8 @@ if __name__ == '__main__':
             rates = [9.0, 9.5, 9.9, 9.95, 8.0]
             # rates = [1.0, 2.0, 4.0, 6.0, 8.0, 9.0, 9.5, 9.9, 9.95]
 
-        for lname in lnames:
-            for rate in reversed(rates):
+        for rate in reversed(rates):
+            for lname in lnames:
 
                 if skip_mlp and lname == 'mlp':
                     continue
