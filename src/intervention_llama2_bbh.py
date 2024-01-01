@@ -322,19 +322,36 @@ if __name__ == '__main__':
     best_rate = None
 
     # for lnum in [-1, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17]:
-    for lnum in [-1, 31, 30, 29, 28, 27]:
+    skip_mlp = False
+    skip_attn = False
+    mlp_score = (0, 0)
+    attn_score = (0, 0)
+    for lnum in [57]:
 
         if lnum == -1:
             lnames = ["dont"]
             rates = [9.9]
         else:
-            lnames = ["fc_in", "fc_out"]
-            rates = [8.0, 9.0, 9.5, 9.9, 9.95]
+            lnames = ["attn", "mlp"]
+            #lnames = ["attn"]
+            #rates = [9.0]
+            rates = [9.0, 9.5, 9.9, 9.95, 8.0]
             # rates = [1.0, 2.0, 4.0, 6.0, 8.0, 9.0, 9.5, 9.9, 9.95]
 
         for lname in lnames:
             for rate in reversed(rates):
 
+                if skip_mlp and lname == 'mlp':
+                    continue
+                if skip_attn and lname == 'attn':
+                    continue
+
+                if skip_mlp is False and skip_attn is False and mlp_score != (0, 0) and attn_score != (0, 0):
+                    if mlp_score[0] > attn_score[0] or (mlp_score[0] == attn_score[0] and mlp_score[1] < attn_score[1]):
+                        skip_attn = True
+                    else:
+                        skip_mlp = True
+                        
                 args.lnum = lnum
                 args.lname = lname
                 args.rate = rate
@@ -352,6 +369,12 @@ if __name__ == '__main__':
                     base_results = results
                     logger.log(f"Base Llama2 => {results.to_str()}")
                 else:
+
+                    if lname == 'mlp':
+                        mlp_score = (results.val_acc, results.val_logloss)
+                    else:
+                        attn_score = (results.val_acc, results.val_logloss)
+                        
                     logger.log(f"Llama2 => Layer number: {lnum}, Layer name {lname}, Rate {rate} => "
                                f"{results.to_str()}")
                     if best_results is None or \
@@ -365,7 +388,7 @@ if __name__ == '__main__':
                     if base_results is not None:
                         logger.log(f"Base model results {base_results.to_str()}. ")
 
-                    logger.log(f"Best results {best_results.to_str()} at "
+                    logger.log(f"\nBest results {best_results.to_str()} at "
                                f"layer: {best_lnum}, lname: {best_lname}, rate: {best_rate}")
                     logger.log("=============")
 
