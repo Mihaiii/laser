@@ -323,14 +323,14 @@ if __name__ == '__main__':
     best_rate = None
 
     # for lnum in [-1, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17]:
-    for lnum in [-1, 31, 30, 29, 28, 27]:
+    for lnum in [56,55,54,51]:
 
         if lnum == -1:
             lnames = ["dont"]
             rates = [9.9]
         else:
-            lnames = ["fc_in", "fc_out"]
-            rates = [8.0, 9.0, 9.5, 9.9, 9.95]
+            lnames = ["mlp"]
+            rates = [8.0]
             # rates = [1.0, 2.0, 4.0, 6.0, 8.0, 9.0, 9.5, 9.9, 9.95]
 
         for lname in lnames:
@@ -339,7 +339,7 @@ if __name__ == '__main__':
                 args.lnum = lnum
                 args.lname = lname
                 args.rate = rate
-                model = deepcopy(base_model)
+                model = base_model
                 predictions = experiment.intervene(model=model,
                                                    tokenizer=tokenizer,
                                                    dataset=dataset,
@@ -366,7 +366,7 @@ if __name__ == '__main__':
 
                     logger.log(f"Base model results {base_results.to_str()}. "
                                f"Best results {best_results.to_str()} at "
-                               f"layer: {best_lnum}, lname: {best_lnum}, rate: {best_rate}")
+                               f"layer: {best_lnum}, lname: {best_lname}, rate: {best_rate}")
                     logger.log("=============")
 
     logger.log("Experimented Completed.")
